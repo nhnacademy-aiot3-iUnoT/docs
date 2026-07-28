@@ -68,11 +68,10 @@ POST /deleteInventory
 |---|---|---|
 | GET | 조회 | 회원 조회 |
 | POST | 생성 | 회원 가입, 재고 등록 |
-| PUT | 전체 수정 | 회원 정보 전체 수정 |
-| PATCH | 일부 수정 | 상태 변경 |
+| PUT | 수정 | 회원 정보 수정 |
 | DELETE | 삭제 | 데이터 삭제 |
 
-
+- PATCH 사용하지 않기로 함 (PUT으로 통일)
 ---
 
 # 3. Path Variable / Query Parameter 사용 기준
