@@ -1,0 +1,252 @@
+<svg viewBox="0 0 1600 1180" xmlns="http://www.w3.org/2000/svg" font-family="'Pretendard','Malgun Gothic',sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#4b5563"/>
+    </marker>
+    <marker id="arrowBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/>
+    </marker>
+    <marker id="arrowGray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#9ca3af"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="1600" height="1180" fill="#ffffff"/>
+  <text x="800" y="36" text-anchor="middle" font-size="22" font-weight="700" fill="#111827">환경관리 룰엔진 Flow (v5)</text>
+  <text x="800" y="58" text-anchor="middle" font-size="13" fill="#6b7280">외부 MQTT 수집 · 가상 센서 → 구역 해석 → RabbitMQ 파티션 Queue → 검증 · 저장 → 룰 판단 → 통계 → 상태 전이 → 이벤트 → 구역 상태 → 알림</text>
+
+  <!-- ================= Inventory (오른쪽 세로 패널) ================= -->
+  <rect x="1180" y="90" width="380" height="330" rx="10" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="1370" y="115" text-anchor="middle" font-size="13" font-weight="700" fill="#166534">Inventory 내부 API (/api/core/internal)</text>
+
+  <rect x="1200" y="130" width="340" height="30" rx="5" fill="#fff" stroke="#22c55e"/>
+  <text x="1215" y="150" font-size="10" fill="#166534">GET /devices/location?device-eui=  · 기기 → 조직/저장소/구역</text>
+
+  <rect x="1200" y="167" width="340" height="30" rx="5" fill="#fff" stroke="#22c55e"/>
+  <text x="1215" y="187" font-size="10" fill="#166534">GET /zones/{id}/activation  · 구역·저장소 운영 여부</text>
+
+  <rect x="1200" y="204" width="340" height="30" rx="5" fill="#fff" stroke="#22c55e"/>
+  <text x="1215" y="224" font-size="10" fill="#166534">GET /zones/{id}/zone-threshold  · 구역 임계값</text>
+
+  <rect x="1200" y="241" width="340" height="30" rx="5" fill="#fff" stroke="#22c55e"/>
+  <text x="1215" y="261" font-size="10" fill="#166534">GET /notifications/receivers  · 알림 수신자</text>
+
+  <rect x="1200" y="278" width="340" height="30" rx="5" fill="#fff" stroke="#22c55e"/>
+  <text x="1215" y="298" font-size="10" fill="#166534">PUT /zones/{id}/env-status  · 구역 환경 상태 갱신</text>
+
+  <rect x="1200" y="315" width="340" height="30" rx="5" fill="#fff" stroke="#22c55e"/>
+  <text x="1215" y="335" font-size="10" fill="#166534">POST /environment-events  · 웹 알림(환경 이벤트) 저장</text>
+
+  <rect x="1200" y="356" width="340" height="50" rx="5" fill="#dcfce7" stroke="#22c55e"/>
+  <text x="1215" y="375" font-size="10" font-weight="700" fill="#166534">Caffeine 캐시 (device-zone 30m · zone-activation 30s ·</text>
+  <text x="1215" y="391" font-size="10" font-weight="700" fill="#166534">zone-threshold 1m · zone-location 30m)</text>
+
+  <!-- ================= Row A : 외부 수집 ================= -->
+  <rect x="30" y="105" width="140" height="80" rx="8" fill="#eef2ff" stroke="#6366f1" stroke-width="1.5"/>
+  <text x="100" y="138" text-anchor="middle" font-size="12.5" font-weight="600" fill="#3730a3">외부 MQTT</text>
+  <text x="100" y="157" text-anchor="middle" font-size="9" fill="#4338ca">application/+/device/</text>
+  <text x="100" y="170" text-anchor="middle" font-size="9" fill="#4338ca">+/event/up</text>
+
+  <rect x="205" y="90" width="920" height="110" rx="8" fill="#fff7ed" stroke="#f97316" stroke-width="1.5"/>
+  <text x="665" y="112" text-anchor="middle" font-size="12" font-weight="700" fill="#9a3412">ExternalSensorFlow (sensor-processing-flow) · 클러스터 전체 1개 · Redis Lease Lock 소유 인스턴스만 실행</text>
+
+  <rect x="230" y="125" width="255" height="58" rx="6" fill="#fff" stroke="#f97316"/>
+  <text x="357" y="147" text-anchor="middle" font-size="11" font-weight="700" fill="#c2410c">MqttSubscriberNode</text>
+  <text x="357" y="166" text-anchor="middle" font-size="8.5" fill="#9a3412">QoS 1 · 자동 재연결·재구독 · rxInfo[0].nsTime</text>
+
+  <rect x="515" y="125" width="285" height="58" rx="6" fill="#fff" stroke="#f97316"/>
+  <text x="657" y="147" text-anchor="middle" font-size="11" font-weight="700" fill="#c2410c">SensorTransformNode</text>
+  <text x="657" y="166" text-anchor="middle" font-size="8.5" fill="#9a3412">devEui → 구역 해석 · magnet_status→door · 센서별 분리</text>
+
+  <rect x="830" y="125" width="270" height="58" rx="6" fill="#fff" stroke="#f97316"/>
+  <text x="965" y="147" text-anchor="middle" font-size="11" font-weight="700" fill="#c2410c">RabbitNormalizedPublisherNode</text>
+  <text x="965" y="166" text-anchor="middle" font-size="8.5" fill="#9a3412">센서 키 해시 → 파티션 라우팅</text>
+
+  <g stroke="#b45309" stroke-width="1.6" fill="none" marker-end="url(#arrow)">
+    <path d="M170,145 H230"/>
+    <path d="M485,154 H515"/>
+    <path d="M800,154 H830"/>
+  </g>
+
+  <!-- ================= Row B : 가상 센서 ================= -->
+  <rect x="205" y="230" width="920" height="110" rx="8" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.5"/>
+  <text x="665" y="252" text-anchor="middle" font-size="12" font-weight="700" fill="#5b21b6">VirtualSensorFlow (virtual-sensor-flow-{deviceEui}) · 활성 가상 센서마다 1개 · 기기별 Redis Lease Lock</text>
+
+  <rect x="230" y="265" width="255" height="58" rx="6" fill="#fff" stroke="#8b5cf6"/>
+  <text x="357" y="287" text-anchor="middle" font-size="11" font-weight="700" fill="#6d28d9">VirtualSensorGeneratorNode</text>
+  <text x="357" y="306" text-anchor="middle" font-size="8.5" fill="#5b21b6">RANGE·FIXED·PROBABILITY · door는 변할 때만</text>
+
+  <rect x="515" y="265" width="285" height="58" rx="6" fill="#fff" stroke="#8b5cf6"/>
+  <text x="657" y="287" text-anchor="middle" font-size="11" font-weight="700" fill="#6d28d9">SensorZoneResolveNode</text>
+  <text x="657" y="306" text-anchor="middle" font-size="8.5" fill="#5b21b6">devEui → 구역 해석 · 미등록·비활성이면 버림</text>
+
+  <rect x="830" y="265" width="270" height="58" rx="6" fill="#fff" stroke="#8b5cf6"/>
+  <text x="965" y="287" text-anchor="middle" font-size="11" font-weight="700" fill="#6d28d9">RabbitNormalizedPublisherNode</text>
+  <text x="965" y="306" text-anchor="middle" font-size="8.5" fill="#5b21b6">센서 키 해시 → 파티션 라우팅</text>
+
+  <g stroke="#7c3aed" stroke-width="1.6" fill="none" marker-end="url(#arrow)">
+    <path d="M485,294 H515"/>
+    <path d="M800,294 H830"/>
+  </g>
+
+  <rect x="30" y="255" width="140" height="80" rx="8" fill="#ede9fe" stroke="#8b5cf6" stroke-width="1.5"/>
+  <text x="100" y="285" text-anchor="middle" font-size="12" font-weight="600" fill="#5b21b6">Redis</text>
+  <text x="100" y="303" text-anchor="middle" font-size="8.5" fill="#6d28d9">가상 센서 설정</text>
+  <text x="100" y="316" text-anchor="middle" font-size="8.5" fill="#6d28d9">활성 기기 · Lease Lock</text>
+  <path d="M170,294 H230" stroke="#7c3aed" stroke-width="1.6" fill="none" marker-end="url(#arrow)"/>
+
+  <!-- 구역 해석 → Inventory 점선 -->
+  <g stroke="#22c55e" stroke-width="1.3" stroke-dasharray="4 3" fill="none" marker-end="url(#arrowGray)">
+    <path d="M1100,145 H1180"/>
+    <path d="M1100,294 H1160 V200 H1180"/>
+  </g>
+
+  <!-- ================= Row C : 파티션 큐 ================= -->
+  <rect x="380" y="380" width="620" height="86" rx="8" fill="#ecfeff" stroke="#0891b2" stroke-width="1.5"/>
+  <text x="690" y="404" text-anchor="middle" font-size="12" font-weight="700" fill="#155e75">RabbitMQ · iunot.sensor_exchange (Direct, Durable)</text>
+
+  <rect x="410" y="415" width="265" height="38" rx="5" fill="#fff" stroke="#0891b2"/>
+  <text x="542" y="432" text-anchor="middle" font-size="10.5" font-weight="700" fill="#0e7490">iunot.sensor.normalized.queue.0</text>
+  <text x="542" y="446" text-anchor="middle" font-size="8.5" fill="#155e75">Durable · singleActiveConsumer</text>
+
+  <rect x="700" y="415" width="265" height="38" rx="5" fill="#fff" stroke="#0891b2"/>
+  <text x="832" y="432" text-anchor="middle" font-size="10.5" font-weight="700" fill="#0e7490">iunot.sensor.normalized.queue.1</text>
+  <text x="832" y="446" text-anchor="middle" font-size="8.5" fill="#155e75">Durable · singleActiveConsumer</text>
+
+  <text x="1020" y="430" font-size="9.5" fill="#6b7280">파티션 = floorMod(hash(org:storage:zone:deviceEui:sensorType), 2)</text>
+  <text x="1020" y="446" font-size="9.5" fill="#6b7280">같은 센서 → 항상 같은 파티션 → 항상 같은 컨슈머 → 순서 보장</text>
+
+  <g stroke="#0e7490" stroke-width="1.8" fill="none" marker-end="url(#arrow)">
+    <path d="M965,183 V200 H1140 V360 H690 V380"/>
+    <path d="M965,323 V350 H700 V380"/>
+  </g>
+
+  <!-- ================= Row D : 표준 센서 처리 Flow ================= -->
+  <rect x="40" y="500" width="1520" height="290" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="800" y="524" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1e40af">NormalizedSensorProcessingFlow (normalized-sensor-processing-flow) · 룰엔진 인스턴스마다 1개 · pipeline() 순서대로 자동 배선</text>
+
+  <rect x="65" y="540" width="280" height="66" rx="6" fill="#fff" stroke="#2563eb"/>
+  <text x="205" y="562" text-anchor="middle" font-size="10.5" font-weight="700" fill="#1d4ed8">NormalizedSensorConsumerNode</text>
+  <text x="205" y="579" text-anchor="middle" font-size="8.5" fill="#1e40af">@RabbitListener · 전 파티션 구독</text>
+  <text x="205" y="594" text-anchor="middle" font-size="8.5" fill="#1e40af">완료 최대 30초 대기 → AUTO ACK</text>
+
+  <rect x="375" y="540" width="255" height="66" rx="6" fill="#fff" stroke="#2563eb"/>
+  <text x="502" y="566" text-anchor="middle" font-size="10.5" font-weight="700" fill="#1d4ed8">SensorPayloadValidationNode</text>
+  <text x="502" y="585" text-anchor="middle" font-size="8.5" fill="#1e40af">양수 ID · 장치 · 센서 · 값 · 단위 · 시각</text>
+
+  <rect x="660" y="540" width="230" height="66" rx="6" fill="#fff" stroke="#2563eb"/>
+  <text x="775" y="566" text-anchor="middle" font-size="10.5" font-weight="700" fill="#1d4ed8">DatabaseSaveNode</text>
+  <text x="775" y="585" text-anchor="middle" font-size="8.5" fill="#1e40af">InfluxDB 저장 (Tag 6 · Field value)</text>
+
+  <rect x="920" y="540" width="285" height="66" rx="6" fill="#fff" stroke="#2563eb"/>
+  <text x="1062" y="562" text-anchor="middle" font-size="10.5" font-weight="700" fill="#1d4ed8">EnvironmentRuleEvaluationNode</text>
+  <text x="1062" y="579" text-anchor="middle" font-size="8.5" fill="#1e40af">ThresholdRuleCommand (온·습·조도)</text>
+  <text x="1062" y="594" text-anchor="middle" font-size="8.5" fill="#1e40af">DoorRuleCommand (문열림)</text>
+
+  <rect x="1235" y="540" width="290" height="66" rx="6" fill="#fff" stroke="#2563eb"/>
+  <text x="1380" y="566" text-anchor="middle" font-size="10.5" font-weight="700" fill="#1d4ed8">DailyThresholdStatNode</text>
+  <text x="1380" y="585" text-anchor="middle" font-size="8.5" fill="#1e40af">Redis 하루 이탈 통계 (TTL 3일)</text>
+
+  <g stroke="#1d4ed8" stroke-width="1.6" fill="none" marker-end="url(#arrowBlue)">
+    <path d="M345,573 H375"/>
+    <path d="M630,573 H660"/>
+    <path d="M890,573 H920"/>
+    <path d="M1205,573 H1235"/>
+    <path d="M1380,606 V630 H1305"/>
+  </g>
+
+  <rect x="1030" y="655" width="275" height="66" rx="6" fill="#fff" stroke="#2563eb"/>
+  <text x="1167" y="677" text-anchor="middle" font-size="10.5" font-weight="700" fill="#1d4ed8">EnvironmentStatusDecisionNode</text>
+  <text x="1167" y="694" text-anchor="middle" font-size="8.5" fill="#1e40af">NORMAL / WARNING / CRITICAL</text>
+  <text x="1167" y="709" text-anchor="middle" font-size="8.5" fill="#1e40af">Redis 공유 상태 · 30분 재알림</text>
+
+  <rect x="765" y="655" width="215" height="66" rx="6" fill="#fff" stroke="#2563eb"/>
+  <text x="872" y="681" text-anchor="middle" font-size="10.5" font-weight="700" fill="#1d4ed8">EventCreateNode</text>
+  <text x="872" y="700" text-anchor="middle" font-size="8.5" fill="#1e40af">EnvironmentStatusEventDto 확정</text>
+
+  <rect x="460" y="655" width="255" height="66" rx="6" fill="#fff" stroke="#2563eb"/>
+  <text x="587" y="677" text-anchor="middle" font-size="10.5" font-weight="700" fill="#1d4ed8">ZoneEnvStatusReportNode</text>
+  <text x="587" y="694" text-anchor="middle" font-size="8.5" fill="#1e40af">구역 센서 중 최악 상태 →</text>
+  <text x="587" y="709" text-anchor="middle" font-size="8.5" fill="#1e40af">Inventory 구역 환경 상태 갱신</text>
+
+  <rect x="150" y="655" width="260" height="66" rx="6" fill="#fff" stroke="#2563eb" stroke-dasharray="0"/>
+  <text x="280" y="677" text-anchor="middle" font-size="10.5" font-weight="700" fill="#1d4ed8">NotificationDispatchNode</text>
+  <text x="280" y="694" text-anchor="middle" font-size="8.5" fill="#1e40af">WEB(환경 이벤트) · TELEGRAM</text>
+  <text x="280" y="709" text-anchor="middle" font-size="8.5" fill="#b91c1c">종단 노드 (출력 포트 없음)</text>
+
+  <g stroke="#1d4ed8" stroke-width="1.6" fill="none" marker-end="url(#arrowBlue)">
+    <path d="M1305,630 H1167 V655"/>
+    <path d="M1030,688 H980"/>
+    <path d="M765,688 H715"/>
+    <path d="M460,688 H410"/>
+  </g>
+
+  <text x="800" y="762" text-anchor="middle" font-size="9.5" fill="#6b7280">완료 신호는 별도 노드가 아니라 AbstractNode.process()가 처리한다 — 다음 노드로 메시지를 넘기지 않은 노드가 그 자리에서 완료를 알린다.</text>
+  <text x="800" y="778" text-anchor="middle" font-size="9.5" fill="#6b7280">룰 결과가 없거나 상태 전이가 없으면 중간에서 끝난다(가장 흔한 경로). 예외는 completeProcessingExceptionally()로 Consumer에 전달된다.</text>
+
+  <g stroke="#0e7490" stroke-width="1.8" fill="none" marker-end="url(#arrowBlue)">
+    <path d="M542,453 V500"/>
+    <path d="M832,453 V480 H205 V540"/>
+  </g>
+
+  <!-- ================= Row E : 저장소 / 외부 ================= -->
+  <rect x="640" y="830" width="230" height="76" rx="8" fill="#fef2f2" stroke="#ef4444" stroke-width="1.5"/>
+  <text x="755" y="856" text-anchor="middle" font-size="12" font-weight="700" fill="#991b1b">InfluxDB</text>
+  <text x="755" y="874" text-anchor="middle" font-size="8.5" fill="#b91c1c">원본 버킷 · 요약 버킷(sensor-daily)</text>
+  <text x="755" y="889" text-anchor="middle" font-size="8.5" fill="#b91c1c">zone_daily_summary</text>
+
+  <rect x="920" y="830" width="270" height="76" rx="8" fill="#ede9fe" stroke="#8b5cf6" stroke-width="1.5"/>
+  <text x="1055" y="856" text-anchor="middle" font-size="12" font-weight="700" fill="#5b21b6">Redis</text>
+  <text x="1055" y="874" text-anchor="middle" font-size="8.5" fill="#6d28d9">env-status:state:{조직:저장소:구역} Hash</text>
+  <text x="1055" y="889" text-anchor="middle" font-size="8.5" fill="#6d28d9">sensor-daily-stat:{zoneId}:{date} · TTL 3일</text>
+
+  <rect x="1240" y="830" width="230" height="76" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="1355" y="856" text-anchor="middle" font-size="12" font-weight="700" fill="#166534">Inventory</text>
+  <text x="1355" y="874" text-anchor="middle" font-size="8.5" fill="#15803d">구역 환경 상태 갱신</text>
+  <text x="1355" y="889" text-anchor="middle" font-size="8.5" fill="#15803d">환경 이벤트 저장(웹 알림)</text>
+
+  <rect x="330" y="830" width="230" height="76" rx="8" fill="#eff6ff" stroke="#0ea5e9" stroke-width="1.5"/>
+  <text x="445" y="856" text-anchor="middle" font-size="12" font-weight="700" fill="#075985">Telegram Bot API</text>
+  <text x="445" y="874" text-anchor="middle" font-size="8.5" fill="#0369a1">sendMessage · chat_id 수신자</text>
+  <text x="445" y="889" text-anchor="middle" font-size="8.5" fill="#0369a1">실패해도 Flow는 계속</text>
+
+  <g stroke="#9ca3af" stroke-width="1.3" stroke-dasharray="4 3" fill="none" marker-end="url(#arrowGray)">
+    <path d="M775,606 V810 H755 V830"/>
+    <path d="M1380,606 V800 H1055 V830"/>
+    <path d="M1167,721 V830"/>
+    <path d="M587,721 V800 H1330 V830"/>
+    <path d="M280,721 V830 H330 V860"/>
+    <path d="M280,721 V810 H1280 V830"/>
+  </g>
+
+  <!-- ================= Row F : 부가 구성 ================= -->
+  <rect x="40" y="945" width="480" height="120" rx="8" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="280" y="969" text-anchor="middle" font-size="12" font-weight="700" fill="#92400e">캐시 무효화 (iunot.cache_exchange · Fanout)</text>
+  <text x="60" y="991" font-size="9.5" fill="#92400e">인스턴스마다 iunot.cache.invalidation.queue.{instanceId} (exclusive · autoDelete)</text>
+  <text x="60" y="1008" font-size="9.5" fill="#92400e">{cacheName, key} 수신 → 해당 Caffeine 캐시 항목 제거 (key 없으면 전체 비움)</text>
+  <text x="60" y="1025" font-size="9.5" fill="#92400e">device-zone · zone-location · zone-activation · zone-threshold · member-organization</text>
+  <text x="60" y="1042" font-size="9.5" fill="#b45309">zone-decision-state는 Redis의 구역 판단 상태 Hash를 삭제하라는 신호</text>
+  <text x="60" y="1058" font-size="9.5" fill="#92400e">→ 구역 비활성/재활성 시 상태 전이가 정상 동작</text>
+
+  <rect x="545" y="945" width="480" height="120" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5"/>
+  <text x="785" y="969" text-anchor="middle" font-size="12" font-weight="700" fill="#334155">이중화 (LeasedFlowOwner)</text>
+  <text x="565" y="991" font-size="9.5" fill="#334155">Redis Lease Lock — lease 10초 · 확인·갱신 주기 3초 · ownerToken = instanceId:UUID</text>
+  <text x="565" y="1008" font-size="9.5" fill="#334155">reconcile 순서: 자기 차단 → 목표 조회 → 반납 → 갱신 → 획득</text>
+  <text x="565" y="1025" font-size="9.5" fill="#334155">자기 차단: 마지막 갱신 성공 후 7초(=lease−renew) 경과 시 Redis 응답과 무관하게 중지</text>
+  <text x="565" y="1042" font-size="9.5" fill="#334155">ExternalIngressCoordinator(단일 키) · VirtualSensorCoordinator(deviceEui별)</text>
+  <text x="565" y="1058" font-size="9.5" fill="#334155">가상 센서 설정이 바뀌면 onLeaseRenewed()가 Flow를 재시작 → 무중단 반영</text>
+
+  <rect x="1050" y="945" width="510" height="120" rx="8" fill="#f5f3ff" stroke="#a855f7" stroke-width="1.5"/>
+  <text x="1305" y="969" text-anchor="middle" font-size="12" font-weight="700" fill="#6b21a8">하루 요약 배치 (DailySummaryRollupScheduler)</text>
+  <text x="1070" y="991" font-size="9.5" fill="#6b21a8">cron 0 10 0 * * * (Asia/Seoul) · 어제치 대상 · 인스턴스 간 Lock 없음(멱등)</text>
+  <text x="1070" y="1008" font-size="9.5" fill="#6b21a8">구역별 평균·최소·최대 + Redis 임계 이탈 비율 + 전일 대비 + 문 개폐 횟수·시간</text>
+  <text x="1070" y="1025" font-size="9.5" fill="#6b21a8">→ 요약 버킷 measurement zone_daily_summary</text>
+  <text x="1070" y="1042" font-size="9.5" fill="#6b21a8">GET /api/rule-engine/internal/storages/{id}/daily-summaries?from=&amp;to=</text>
+  <text x="1070" y="1058" font-size="9.5" fill="#6b21a8">POST /api/rule-engine/internal/daily-summary-rollups?date= (수동 복구)</text>
+
+  <!-- ================= 범례 ================= -->
+  <text x="40" y="1100" font-size="10" font-weight="700" fill="#374151">제거된 구성</text>
+  <text x="40" y="1118" font-size="9.5" fill="#9ca3af">내부 MQTT · SectionEnvironmentFlow · Raw Queue(iunot.sensor.raw.queue) · RabbitRawPublisherNode · RawSensorConsumer · FlowCompletionNode · 코드 내장 SectionCatalog</text>
+  <text x="40" y="1140" font-size="10" font-weight="700" fill="#374151">미구현</text>
+  <text x="40" y="1158" font-size="9.5" fill="#9ca3af">DLQ · Retry 정책 · 멱등성 키 · 미수신 센서 판단 · 알림 발송 큐 분리 및 재시도 · 카카오 등 추가 채널</text>
+</svg>
